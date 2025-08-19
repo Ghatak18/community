@@ -1,0 +1,133 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_orders
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tublai
+      POSTGRES_PASSWORD: supratik
+      POSTGRES_DB: orders_db
+      POSTGRES_HOST_AUTH_METHOD: md5
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tublai -d orders_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres_water:
+    image: postgres:16
+    container_name: postgres_water
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wateruser
+      POSTGRES_PASSWORD: waterpass
+      POSTGRES_DB: water_db
+      POSTGRES_HOST_AUTH_METHOD: md5
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_water_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wateruser -d water_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres_user:
+    image: postgres:16
+    container_name: postgres_user
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: useradmin
+      POSTGRES_PASSWORD: userpass
+      POSTGRES_DB: users_db
+      POSTGRES_HOST_AUTH_METHOD: md5
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U useradmin -d users_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  
+  kong-db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kong
+    volumes:
+      - kong-data:/var/lib/postgresql/data
+
+  kong-migrations:
+    image: kong:3.6
+    depends_on:
+      - kong-db
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_PASSWORD: kong
+    command: kong migrations bootstrap
+
+  kong:
+    image: kong:3.6.1
+    depends_on:
+      - kong-migrations
+    ports:
+      - "8000:8000"       # Proxy
+      - "8001:8001"       # Admin API
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_PASSWORD: kong
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PLUGINS: bundled,jwt-to-header
+      #KONG_PLUGINS: "bundled,jwt-to-header"  # Only enable what you need
+      KONG_PLUGINSERVER_NAMES: "jwt-to-header"
+      KONG_LUA_PACKAGE_PATH: /usr/local/share/lua/5.1/?.lua;/usr/local/kong/?.lua;./?.lua;
+
+    volumes:
+      - ./plugins/jwt-to-header:/usr/local/share/lua/5.1/kong/plugins/jwt-to-header
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  userservice:
+    build: ./userService
+    volumes:
+      - ./userService:/app        
+      - /app/node_modules         
+    command: npm start           
+    ports:
+      - "50051:50051"
+      - "4003:3003"
+  
+  waterservice:
+    build: ./waterService
+    volumes:
+      - ./waterService:/app
+      - /app/node_modules
+    command: npm start
+    ports:
+      - "50052:50052"
+      - "4000:3000"
+
+volumes:
+  postgres_data:
+  postgres_water_data:
+  postgres_user_data:
+  kong-data:

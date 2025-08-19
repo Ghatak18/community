@@ -1,0 +1,70 @@
+_format_version: "3.0"
+
+
+services:
+  - name: waterservice
+    url: http://waterservice:3000/1/
+    routes:
+      - name: waterservice-route
+        paths:
+          - /1
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              uri_param_names: ["jwt"]
+              cookie_names: ["accessToken"]
+              secret_is_base64: false
+              claims_to_verify: ["exp"]
+              key_claim_name: "iss"
+              header_names: ["Authorization"]
+              run_on_preflight: true  # Ensures JWT runs on OPTIONS requests
+
+          - name: jwt-to-header  # Your custom plugin
+            config:
+              claim_name: "sub"
+              header_name: "X-User-Id"
+              fail_on_missing: true
+
+          - name: request-transformer
+            config:
+              add:
+                headers:
+                  - "x-test-header:static-value"
+
+  - name: userservice
+    url: http://userservice:3003/user/
+    routes:
+      - name: userservice-route
+        paths:
+          - /user
+        strip_path: True
+
+# plugins:
+#   - name: jwt
+#     service: waterservice
+#     config:
+#       uri_param_names:
+#         - jwt                         # Token can come as ?jwt=...
+#       cookie_names:
+#         - accessToken                 # Token can come from cookie
+#       secret_is_base64: false
+#       claims_to_verify:
+#         - exp
+#       key_claim_name: "iss"
+      
+#   - name: request-transformer
+#     service: waterservice
+#     config:
+#       add:
+#         headers:
+#           - "x-user-id:$(jwt.claim.id)"      # Raw secret string, not base64-encoded
+
+consumers:
+  - username: testuser
+    jwt_secrets:
+      - key: testuser                # Must match "iss" claim in JWT
+        secret: "123456"      # Shared secret to verify token
+        algorithm: HS256
+
+#  deck gateway sync kong.yaml --kong-addr http://localhost:8001
