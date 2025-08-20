@@ -11,7 +11,7 @@ router.post("/buywatergrpc", async(req,res)=>{
   console.log('Headers:', req.headers);
   const userId = req.headers["x-user-id"]; 
   const userDetails = await getUserById(userId);
-  console.log(userDetails); // 🔍 confirm it works
+  //console.log(userDetails); // 🔍 confirm it works
   const pricePerUnit = 5;
   const quantity = req.body.quantity;
   const order = await prisma.order.create({
@@ -26,6 +26,27 @@ router.post("/buywatergrpc", async(req,res)=>{
   // Continue with buying logic
   res.json({ message: 'Water purchased', user: userDetails });
  // res.json({ message: 'Water purchased' });
+})
+
+router.post("/updatewaterstorage", async(req,res)=>{
+    const quantity = req.body.quantity;
+//     const updatedUser = await prisma.user.update({
+//   where: {
+//     id: 1, // Assuming 'id' is a unique identifier
+//   },
+//   data: {
+//     email: 'new.email@example.com',
+//     name: 'Updated Name',
+//   },
+// });
+    const updateWater = await prisma.waterstorage.create({
+      data: {
+        quantity: 1000
+      }
+    })
+    res.json({
+      "messege":"WaterStorage is created"
+    })
 })
 router.post("/buywater",async(req,res)=>{
     const requiredUnit = req.body.requiredUnit;

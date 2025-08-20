@@ -1,4 +1,4 @@
-version: "3.9"
+# version: "3.9"
 
 services:
   postgres:
@@ -126,8 +126,21 @@ services:
       - "50052:50052"
       - "4000:3000"
 
+
+  redis:
+    image: redis:7-alpine
+    container_name: payment_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - payment-redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+
 volumes:
   postgres_data:
   postgres_water_data:
   postgres_user_data:
   kong-data:
+  payment-redis-data:

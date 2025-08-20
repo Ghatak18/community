@@ -1,0 +1,17 @@
+syntax = "proto3"
+
+package amount;
+
+service amountService{
+    rpc GetAmountById {UserRequest} returns {UserResponse};
+}
+
+messege UserRequest {
+    String id = 1;
+    Float amount = 2;
+}
+
+messege UserResponse{
+    Boolean isSuccess = 1;
+    String message = 2;
+}
