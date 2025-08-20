@@ -13,6 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Order {
+  id          String   @id @default(uuid())
+  userId      String
+  userData    Json
+  quantity    Int
+  price       Float
+  invoiceId   String   @unique
+  status      OrderStatus   @default(PENDING)
+  createdAt   DateTime @default(now())
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  DELIVERED
+}
+
 model WaterStorage {
   id          Int      @id @default(autoincrement())
   quantity    Int
