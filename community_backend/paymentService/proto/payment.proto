@@ -1,0 +1,16 @@
+syntax = "proto3";
+package payment;
+
+service RequestForPayment{
+    rpc RequestForPayment (paymentRequest) returns (paymentLink);
+}
+
+message paymentRequest {
+    string orderId = 1;
+    string userId = 2;
+    int32 price = 3;
+}
+
+message paymentLink {
+    string paymentLink = 1;
+}
