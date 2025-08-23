@@ -16,7 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 const router = require('./Routes/1.js')
-app.use("/2" ,router);
+app.use("/pay" ,router);
 
 app.listen(port,()=>{
     console.log(`server 2 is running on ${port}`);

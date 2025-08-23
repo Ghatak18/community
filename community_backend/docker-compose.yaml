@@ -126,7 +126,15 @@ services:
       - "50052:50052"
       - "4000:3000"
 
-
+  paymentservice:
+    build: ./paymentService
+    volumes:
+      - ./paymentService:/app
+      - /app/node_modules
+    command: npm start
+    ports:
+      - "50053:50053"
+      - "4001:3001"
   redis:
     image: redis:7-alpine
     container_name: payment_redis
@@ -142,5 +150,6 @@ volumes:
   postgres_data:
   postgres_water_data:
   postgres_user_data:
+  postgres_payment_data:
   kong-data:
   payment-redis-data:

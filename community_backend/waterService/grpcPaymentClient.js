@@ -20,7 +20,7 @@ const paymentPackage = grpcObject.payment;
 
 // ⚠️ Now correctly access the service (case-sensitive!)
 const client = new paymentPackage.RequestForPayment(
-  'host.docker.internal:50051',  // Or 'paymentservice:50051' if in Docker
+  'paymentservice:50053',  // Or 'paymentservice:50051' if in Docker
   grpc.credentials.createInsecure()
 );
 

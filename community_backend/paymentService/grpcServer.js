@@ -13,7 +13,9 @@ server.addService(paymentPackage.RequestForPayment.service,{
     RequestForPayment: getPaymentUrl
 });
 
-server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(),()=>{
-    console.log("gRPC Server running on port 50051");
+
+
+server.bindAsync('0.0.0.0:50053', grpc.ServerCredentials.createInsecure(),()=>{
+    console.log("gRPC Server running on port 50053");
     server.start();
 });

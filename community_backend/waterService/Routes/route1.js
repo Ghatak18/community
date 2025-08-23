@@ -34,20 +34,24 @@ router.post("/buywatergrpc", async(req,res)=>{
                 invoiceId: String(2*Math.random())
             }
   })
+
+        const response = await requestPayment(order.id.toString(), order.userId, order.price);
+        console.log("Payment Link:", response.paymentLink);
+
+          res.json({ message: 'please pay here', link: response.paymentLink, price: price });
+
   }else{
     return res.json({
       "messege":"hi this is me"
     })
   }
-  
-        const response = await requestPayment('ORD123', 'USR456', 100);
-        console.log("Payment Link:", response.paymentLink);
+
+        
   
   
 
 
   // Continue with buying logic
-  res.json({ message: 'Water purchased', link: response.paymentLink, user: userDetails,  });
  // res.json({ message: 'Water purchased' });
 })
 

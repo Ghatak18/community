@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "concurrently \"nodemon server.js\" \"node grpcServer.js\""
   },
   "keywords": [],
   "author": "",
@@ -14,9 +14,13 @@
     "@grpc/grpc-js": "^1.13.4",
     "@grpc/proto-loader": "^0.8.0",
     "axios": "^1.11.0",
+    "concurrently": "^9.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "nodemon": "^3.1.10",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "redis": "^5.8.2",
+    "uuid": "^11.1.0",
+    "uuidv4": "^6.2.13"
   }
 }

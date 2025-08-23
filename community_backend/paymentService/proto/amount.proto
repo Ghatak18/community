@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user;
+
+service AmountService {
+    rpc GetAmountById (AmountRequest) returns (AmountResponse);
+}
+
+message AmountRequest {
+    string id = 1;
+    float amount = 2;
+}
+
+message AmountResponse {
+    bool isSuccess = 1;
+    string message = 2;
+}

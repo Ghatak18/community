@@ -2,6 +2,7 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 const userService = require('./Services/grpcUserService.js')
+const paymentService = require('./Services/grpcAmountService.js')
 
 const PROTO_PATH = path.join(__dirname, 'Proto', 'user.proto');
 const packageDef = protoLoader.loadSync(PROTO_PATH);
@@ -13,7 +14,16 @@ server.addService(userPackage.UserService.service,{
     GetUserById: userService.getUserById
 });
 
-server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(),()=>{
-    console.log("gRPC Server running on port 50051");
-    server.start();
+server.addService(userPackage.AmountService.service,{
+    GetAmountById: paymentService.getAmountById
+});
+
+server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), (err, port) => {
+    if (err) {
+        console.error("Server binding failed:", err);
+        return;
+    }
+
+    console.log(`gRPC Server successfully bound on port ${port}`);
+    server.start();  // ✅ Safe to start here
 });
