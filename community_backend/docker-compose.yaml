@@ -144,7 +144,18 @@ services:
     volumes:
       - payment-redis-data:/data
     command: redis-server --save 60 1 --loglevel warning
-
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   postgres_data:
@@ -153,3 +164,4 @@ volumes:
   postgres_payment_data:
   kong-data:
   payment-redis-data:
+  rabbitmq_data:

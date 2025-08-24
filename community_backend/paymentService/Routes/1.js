@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const amqp = require('amqplib');
 // const { PrismaClient } = require("@prisma/client");
 // const prisma = new PrismaClient();
 const client = require('../redisClient/redisClient.js')
@@ -25,6 +26,22 @@ try{
           const updatedUser = await updateAmountById(parsed.userId,deposited)
         console.log(updatedUser)
         await client.set(`processed:${code}`, 'true', { EX: 300 }); // Expire in 1 hour
+
+        
+        const conn = await amqp.connect('amqp://admin:admin@rabbitmq:5672');
+        const ch = await conn.createChannel();
+        const queue = parsed.ack;
+        const responseToServices = {
+          "isSuccess": updatedUser.isSuccess,
+          "messege":updatedUser.message,
+          "orderId":parsed.orderId
+        }
+        await ch.assertQueue(queue);
+        ch.sendToQueue(queue, Buffer.from(JSON.stringify(responseToServices)));
+        console.log(`ack Sent to ${parsed.ack}`);
+        await ch.close();
+        await conn.close();
+
 
       return res.json({
         "messege":updatedUser.message,

@@ -9,6 +9,7 @@ message paymentRequest {
     string orderId = 1;
     string userId = 2;
     int32 price = 3;
+    string ack = 4;
 }
 
 message paymentLink {

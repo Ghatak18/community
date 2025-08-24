@@ -10,10 +10,12 @@ const getPaymentUrl = async(call,callback)=>{
     const orderId = call.request.orderId
     const userId = call.request.userId
     const price = call.request.price
+    const ack = call.request.ack
     const cacheData = {
       orderId,
       userId,
-      price
+      price,
+      ack
     };
 
     await client.set(code, JSON.stringify(cacheData), {

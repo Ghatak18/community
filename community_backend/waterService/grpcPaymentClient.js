@@ -25,13 +25,14 @@ const client = new paymentPackage.RequestForPayment(
 );
 
 // Export a function to use this
-function requestPayment(orderId, userId, price) {
+function requestPayment(orderId, userId, price, ack) {
   return new Promise((resolve, reject) => {
     client.RequestForPayment(
       {
         orderId,
         userId,
-        price
+        price,
+        ack
       },
       (err, response) => {
         if (err) return reject(err);
