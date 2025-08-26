@@ -21,6 +21,8 @@ model User {
   password     String
   refreshToken String?
   amount       Float    @default(100)
+  waterAmount  Int      @default(0)
+  gasAmount    Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

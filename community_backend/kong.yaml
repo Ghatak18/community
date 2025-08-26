@@ -32,6 +32,36 @@ services:
                 headers:
                   - "x-test-header:static-value"
 
+  - name: payentservice
+    url: http://paymentservice:3001/pay/
+    routes:
+      - name: paymentservice-route
+        paths:
+          - /pay
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              uri_param_names: ["jwt"]
+              cookie_names: ["accessToken"]
+              secret_is_base64: false
+              claims_to_verify: ["exp"]
+              key_claim_name: "iss"
+              header_names: ["Authorization"]
+              run_on_preflight: true  # Ensures JWT runs on OPTIONS requests
+
+          # - name: jwt-to-header  # Your custom plugin
+          #   config:
+          #     claim_name: "sub"
+          #     header_name: "X-User-Id"
+          #     fail_on_missing: true
+
+          # - name: request-transformer
+          #   config:
+          #     add:
+          #       headers:
+          #         - "x-test-header:static-value"
+
   - name: userservice
     url: http://userservice:3003/user/
     routes:

@@ -34,7 +34,7 @@ router.post("/buywatergrpc", async (req, res) => {
         invoiceId: String(2 * Math.random()),
       },
     });
-    const ack = "water_ack"
+    const ack = "water_ack";
     const response = await requestPayment(
       order.id.toString(),
       order.userId,
@@ -49,26 +49,44 @@ router.post("/buywatergrpc", async (req, res) => {
       price: price,
     });
 
-    const conn = await amqp.connect("amqp://admin:admin@rabbitmq:5672");
-    const ch = await conn.createChannel();
-    const queue = ack;
+  //   const conn = await amqp.connect("amqp://admin:admin@rabbitmq:5672");
+  //   const ch = await conn.createChannel();
+  //   const queue = ack;
 
-    await ch.assertQueue(queue);
-    console.log(" [*] Waiting for messages...");
-    ch.consume(queue, (msg) => {
-      if (msg !== null) {
-        const payload = JSON.parse(msg.content.toString());
-        console.log(" [x] Received:", payload);
-        ch.ack(msg);
-      }
-    });
-  } else {
-    return res.json({
-      messege: "hi this is me",
-    });
-  }
+  //   await ch.assertQueue(queue);
+  //   console.log(" [*] Waiting for messages...");
+  //   ch.consume(queue, async (msg) => {
+  //     if (msg !== null) {
+  //       const payload = JSON.parse(msg.content.toString());
+  //       console.log(" [x] Received:", payload);
+  //       ch.ack(msg);
 
-  // res.json({ message: 'Water purchased' });
+  //       const order1 = await prisma.order.findUnique({
+  //         where: { id: payload.orderId },
+  //       });
+  //       if (!order1) {
+  //         console.log("no orderes found");
+  //       }
+  //       console.log(order1);
+  //       const queue1 = 'userWaterUpdate';
+  //       const requestToUpdate = {
+  //         userId: payload.orderId,
+  //         quantity: payload.quantity
+  //       };
+  //       await ch.assertQueue(queue1);
+  //       ch.sendToQueue(queue1, Buffer.from(JSON.stringify(requestToUpdate)));
+  //       console.log(`update request Sent to userService`);
+  //       await ch.close();
+  //       await conn.close();
+  //     }
+  //   });
+  // } else {
+  //   return res.json({
+  //     messege: "hi this is me",
+  //   });
+   }
+
+  //res.json({ message: 'Water purchased' });
 });
 
 router.post("/updatewaterstorage", async (req, res) => {
