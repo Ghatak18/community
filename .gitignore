@@ -1,0 +1,6 @@
+# Dependency folders in all services
+**/node_modules/
+
+# Environment variable files in all services
+**/.env
+**/.env.*.local

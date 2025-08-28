@@ -1,10 +1,10 @@
 const express = require('express')
 const cors = require('cors')
-
+const dotenv = require('dotenv').config()
 const app = express();
 app.use(express.json());
 
-port = 3001;
+port = process.env.PORT;
 
 const corsOptions = {
   origin: '*', // Allow all origins (replace with specific domain in production)

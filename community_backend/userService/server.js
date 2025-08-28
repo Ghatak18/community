@@ -4,7 +4,8 @@ const cors = require('cors')
 const cookieParser = require("cookie-parser")
 app.use(express.json())
 app.use(cookieParser());
-port = 3003;
+const dotenv = require('dotenv').config()
+port = process.env.PORT;
 
 const corsOptions = {
   origin: '*', // Allow all origins (replace with specific domain in production)
